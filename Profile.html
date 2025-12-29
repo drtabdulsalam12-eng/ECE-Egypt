@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي - ECE Egypt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #17a2b8 0%, #0c5460 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+        .edit-profile-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #17a2b8;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .edit-profile-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .user-avatar-container {
+            margin-bottom: 15px;
+        }
+        .user-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            object-fit: cover;
+            background: white;
+            display: inline-block;
+        }
+        .profile-header h1 {
+            margin: 10px 0;
+        }
+        .profile-header p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+        .trust-score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .profile-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .profile-card h3 {
+            color: #17a2b8;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 10px;
+        }
+        .profile-field {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .profile-field label {
+            font-weight: 600;
+            color: #333;
+        }
+        .profile-field value {
+            color: #666;
+        }
+        .profile-field value.empty {
+            color: #999;
+            font-style: italic;
+        }
+        .skills-list, .languages-list, .certificates-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .skill-tag, .language-tag, .certificate-tag {
+            background: #e8f4f8;
+            color: #17a2b8;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid #17a2b8;
+        }
+        .language-tag {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #856404;
+        }
+        .certificate-tag {
+            background: #d4edda;
+            color: #155724;
+            border-color: #155724;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #138496;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div id="loadingMessage" class="loading">
+            جاري تحميل البيانات...
+        </div>
+
+        <div id="errorMessage" style="display: none;"></div>
+
+        <div id="profileContent" style="display: none;">
+            <div class="profile-header">
+                <a href="Edit_Profile.html" class="edit-profile-btn">✏️ تعديل البيانات</a>
+                <div class="user-avatar-container">
+                    <img id="userAvatar" src="images/default-avatar.png" alt="الصورة الشخصية" class="user-avatar">
+                </div>
+                <h1 id="userName">اسم المستخدم</h1>
+                <p id="userEmail">البريد الإلكتروني</p>
+                <p id="userPhone">رقم الهاتف</p>
+                <div style="font-size: 16px; margin-top: 15px;">
+                    💬 <a href="mailto:dr.t.abdulsalam12@gmail.com" style="color: white; text-decoration: none; margin-left: 10px;">اتصل بنا</a>
+                </div>
+                <p style="font-size: 14px; margin-top: 10px; opacity: 0.9;">⏰ الأحد - الخميس: 10 ص - 6 م</p>
+            </div>
+
+            <div class="profile-grid">
+                <!-- البيانات الأساسية -->
+                <div class="profile-card">
+                    <h3>📋 البيانات الأساسية</h3>
+                    <div class="profile-field">
+                        <label>الجنس:</label>
+                        <value id="userGender">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>رقم البريد:</label>
+                        <value id="userPostalCode">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>المحافظة:</label>
+                        <value id="userGovernorate">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>الإقامة:</label>
+                        <value id="userResidence">-</value>
+                    </div>
+                </div>
+
+                <!-- البيانات التعليمية -->
+                <div class="profile-card">
+                    <h3>🎓 البيانات التعليمية</h3>
+                    <div class="profile-field">
+                        <label>المستوى الدراسي:</label>
+                        <value id="userEducation">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>الجامعة:</label>
+                        <value id="userUniversity">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>الثانوية:</label>
+                        <value id="userHighSchool">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>التخصص:</label>
+                        <value id="userFieldOfStudy">-</value>
+                    </div>
+                </div>
+
+                <!-- تفاصيل الوظيفة -->
+                <div class="profile-card">
+                    <h3>💼 تفاصيل الوظيفة المطلوبة</h3>
+                    <div class="profile-field">
+                        <label>الراتب المرغوب:</label>
+                        <value id="userSalary">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>من الساعة:</label>
+                        <value id="userWorkFrom">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>إلى الساعة:</label>
+                        <value id="userWorkTo">-</value>
+                    </div>
+                    <div class="profile-field">
+                        <label>عدد الساعات:</label>
+                        <value id="userWorkHours">-</value>
+                    </div>
+                </div>
+            </div>
+
+            <!-- المهارات -->
+            <div class="profile-card">
+                <h3>🎯 المهارات</h3>
+                <div id="skillsList" class="skills-list">
+                    <span class="empty">لم تضف أي مهارات بعد</span>
+                </div>
+            </div>
+
+            <!-- اللغات -->
+            <div class="profile-card">
+                <h3>🌐 اللغات</h3>
+                <div id="languagesList" class="languages-list">
+                    <span class="empty">لم تضف أي لغات بعد</span>
+                </div>
+            </div>
+
+            <!-- الشهادات والملفات -->
+            <div class="profile-card">
+                <h3>📜 الشهادات والملفات (PDF)</h3>
+                <div id="certificatesList" class="certificates-list">
+                    <span class="empty">لم تضف أي شهادات بعد</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <a href="Search.html" class="btn btn-primary">العودة للبحث</a>
+                <button class="btn btn-secondary" onclick="window.history.back()">رجوع</button>
+                <button id="deleteAccountBtn" class="btn btn-danger">حذف الحساب نهائياً</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const token = localStorage.getItem('token');
+                const userEmail = localStorage.getItem('userEmail');
+                
+                if (!token || !userEmail) {
+                    showError('يرجى تسجيل الدخول أولاً');
+                    setTimeout(() => window.location.href = 'Auth.html', 2000);
+                    return;
+                }
+
+                // جلب البيانات باستخدام التوكن للأمان والارتباط بالمستخدم الصحيح
+                const response = await fetch(`/api/users/profile-by-token`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    showError(data.message || 'فشل جلب البيانات');
+                    return;
+                }
+
+                displayProfile(data.user);
+                setupDeleteAccount(token);
+            } catch (error) {
+                console.error('Error:', error);
+                showError('حدث خطأ في جلب البيانات');
+            }
+        });
+
+        function displayProfile(user) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+
+            // الصورة الشخصية
+            if (user.avatar) {
+                document.getElementById('userAvatar').src = user.avatar;
+            }
+
+            // البيانات الأساسية
+            document.getElementById('userName').textContent = user.name || 'غير محدد';
+            document.getElementById('userEmail').textContent = user.email || 'غير محدد';
+            document.getElementById('userPhone').textContent = user.phone || 'غير محدد';
+            
+
+            // البيانات الشخصية
+            document.getElementById('userGender').textContent = getGenderText(user.gender);
+            document.getElementById('userPostalCode').textContent = user.postalCode || user.postal_code || '-';
+            document.getElementById('userGovernorate').textContent = user.governorate || '-';
+            document.getElementById('userResidence').textContent = user.residence || '-';
+
+            // البيانات التعليمية
+            document.getElementById('userEducation').textContent = user.educationLevel || '-';
+            document.getElementById('userUniversity').textContent = user.college || '-';
+            document.getElementById('userHighSchool').textContent = user.highSchool || '-';
+            document.getElementById('userFieldOfStudy').textContent = user.fieldOfStudy || '-';
+
+            // تفاصيل الوظيفة
+            document.getElementById('userSalary').textContent = user.desiredSalary ? `${user.desiredSalary} جنيه` : '-';
+            document.getElementById('userWorkFrom').textContent = user.workFrom || '-';
+            document.getElementById('userWorkTo').textContent = user.workTo || '-';
+            document.getElementById('userWorkHours').textContent = user.workHours ? `${user.workHours} ساعات` : '-';
+
+            // المهارات
+            const skillsList = document.getElementById('skillsList');
+            if (user.skills && user.skills.length > 0) {
+                skillsList.innerHTML = user.skills
+                    .map(skill => `<span class="skill-tag">${skill}</span>`)
+                    .join('');
+            }
+
+            // اللغات
+            const languagesList = document.getElementById('languagesList');
+            if (user.languages && user.languages.length > 0) {
+                languagesList.innerHTML = user.languages
+                    .map(lang => {
+                        // يمكن أن تكون اللغة كائن أو نص
+                        const name = typeof lang === 'string' ? lang : (lang.name || lang);
+                        const level = (lang && lang.proficiency_level) ? ` (${lang.proficiency_level})` : '';
+                        return `<span class="language-tag">${name}${level}</span>`;
+                    })
+                    .join('');
+            }
+
+            // الشهادات والملفات
+            const certificatesList = document.getElementById('certificatesList');
+            if (user.certificates && user.certificates.length > 0) {
+                certificatesList.innerHTML = user.certificates
+                    .map(cert => {
+                        const name = cert.name || cert;
+                        const link = cert.fileUrl || '#';
+                        return `<a href="${link}" target="_blank" class="certificate-tag">📄 ${name}</a>`;
+                    })
+                    .join('');
+            }
+        }
+
+        function setupDeleteAccount(token) {
+            document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+                if (confirm('⚠️ هل أنت متأكد من حذف حسابك نهائياً؟ لا يمكن التراجع عن هذا الفعل.')) {
+                    try {
+                        const response = await fetch('/api/users/me', {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            alert('تم حذف الحساب بنجاح');
+                            localStorage.clear();
+                            window.location.href = 'Auth.html';
+                        } else {
+                            alert('فشل حذف الحساب: ' + data.message);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('حدث خطأ أثناء محاولة حذف الحساب');
+                    }
+                }
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function getGenderText(gender) {
+            const map = { 'male': 'ذكر', 'female': 'أنثى' };
+            return map[gender] || '-';
+        }
+    </script>
+</body>
+</html>

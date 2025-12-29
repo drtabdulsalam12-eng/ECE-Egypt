@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المهارات واللغات - الخطوة 5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step completed"><span>1</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed"><span>2</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed"><span>3</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed"><span>4</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active"><span>5</span></div>
+        </div>
+
+        <div class="form-container">
+            <h1>الخطوة 5: المهارات واللغات</h1>
+            <p class="section-description">يمكنك إضافة حتى 7 مهارات ولغات (معاً)</p>
+
+            <div id="itemsCount" class="items-count">العناصر المضافة: <span id="count">0</span> / 7</div>
+
+            <div id="itemsList" class="items-list"></div>
+
+            <div class="button-group">
+                <button type="button" id="addSkillBtn" class="btn btn-secondary">➕ إضافة مهارة جديدة</button>
+                <button type="button" id="addLanguageBtn" class="btn btn-secondary">➕ إضافة لغة جديدة</button>
+            </div>
+
+            <div id="skillForm" class="item-form" style="display: none;">
+                <h3>إضافة مهارة</h3>
+                <div class="form-group">
+                    <label for="skillName">اسم المهارة *</label>
+                    <input type="text" id="skillName" placeholder="مثال: Excel، التسويق، التصميم الجرافيكي...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn btn btn-secondary">إلغاء</button>
+                    <button type="button" id="saveSkillBtn" class="btn btn-primary">حفظ المهارة</button>
+                </div>
+            </div>
+
+            <div id="languageForm" class="item-form" style="display: none;">
+                <h3>إضافة لغة</h3>
+                <div class="form-group">
+                    <label for="languageName">اسم اللغة *</label>
+                    <select id="languageName">
+                        <option value="">اختر اللغة</option>
+                        <option value="الإنجليزية">الإنجليزية (English)</option>
+                        <option value="الفرنسية">الفرنسية (French)</option>
+                        <option value="الألمانية">الألمانية (German)</option>
+                        <option value="الروسية">الروسية (Russian)</option>
+                        <option value="اليابانية">اليابانية (Japanese)</option>
+                        <option value="الكورية">الكورية (Korean)</option>
+                        <option value="الإسبانية">الإسبانية (Spanish)</option>
+                        <option value="لغة أخرى">لغة أخرى (Other language)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nativeLanguage">لغة الأم *</label>
+                    <input type="text" id="nativeLanguage" placeholder="مثال: العربية">
+                </div>
+                <div class="form-group">
+                    <label for="proficiency">مستوى الإجادة *</label>
+                    <select id="proficiency">
+                        <option value="">اختر المستوى</option>
+                        <option value="مبتدئ">مبتدئ</option>
+                        <option value="متوسط">متوسط</option>
+                        <option value="متقدم">متقدم</option>
+                        <option value="ممتاز">ممتاز</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn btn btn-secondary">إلغاء</button>
+                    <button type="button" id="saveLanguageBtn" class="btn btn-primary">حفظ اللغة</button>
+                </div>
+            </div>
+
+            <div id="maxLimitWarning" class="warning-message" style="display: none;">
+                ⚠️ لقد وصلت إلى الحد الأقصى (7). لا يمكنك إضافة المزيد.
+            </div>
+
+            <div class="form-actions">
+                <a href="Certificates.html" class="btn btn-secondary">رجوع</a>
+                <button type="button" id="completeBtn" class="btn btn-primary btn-large">التالي</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/skills_languages.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

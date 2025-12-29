@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البيانات الشخصية - الخطوة 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step completed"><span>1</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active"><span>2</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>3</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>4</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>5</span></div>
+        </div>
+
+        <div class="form-container">
+            <h1>الخطوة 2: استكمال البيانات الشخصية</h1>
+            <p class="step-description">يرجى ملء جميع الحقول بدقة</p>
+
+            <form id="personalInfoForm" enctype="multipart/form-data">
+                <div class="form-section">
+                    <h3>البيانات الأساسية</h3>
+
+                    <div class="form-group">
+                        <label for="fullName">الاسم الكامل</label>
+                        <input type="text" id="fullName" name="full_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profilePhoto">الصورة الشخصية</label>
+                        <div class="upload-area-small" id="profilePhotoArea">
+                            <div class="upload-icon">📸</div>
+                            <p>اضغط هنا لرفع صورتك الشخصية</p>
+                            <input type="file" id="profilePhoto" name="profile_photo" accept="image/*" required>
+                        </div>
+                        <div id="profilePhotoPreview" class="photo-preview" style="display: none;">
+                            <img id="profilePhotoImage" alt="الصورة الشخصية">
+                            <button type="button" id="removeProfilePhoto" class="btn-remove-small">إزالة</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="residence">المحافظة</label>
+                        <input type="text" id="residence" name="residence" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gender">الجنس <span style="color: red;">*</span></label>
+                            <select id="gender" name="gender" required>
+                                <option value="">اختر الجنس</option>
+                                <option value="male">ذكر</option>
+                                <option value="female">أنثى</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="postalCode">رقم البريد <span style="color: red;">*</span></label>
+                            <input type="text" id="postalCode" name="postal_code" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">البريد الإلكتروني</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">رقم الموبايل</label>
+                            <input type="tel" id="mobile" name="mobile" pattern="[0-9]{11}" maxlength="11" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>البيانات التعليمية</h3>
+
+                    <div class="form-group">
+                        <label for="university">الكلية / الجامعة</label>
+                        <input type="text" id="university" name="university" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="highSchool">المدرسة الثانوية</label>
+                        <input type="text" id="highSchool" name="high_school" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fieldOfStudy">المجال أو التخصص</label>
+                        <input type="text" id="fieldOfStudy" name="field_of_study" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="educationLevel">المستوى الدراسي الحالي</label>
+                        <select id="educationLevel" name="education_level" required>
+                            <option value="">اختر المستوى</option>
+                            <option value="ثانوية عامة">ثانوية عامة</option>
+                            <option value="دبلوم">دبلوم</option>
+                            <option value="بكالوريوس">بكالوريوس</option>
+                            <option value="ماجستير">ماجستير</option>
+                            <option value="دكتوراه">دكتوراه</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>المهارات والخبرات</h3>
+
+                    <div class="form-group">
+                        <label for="basicSkills">المهارات الأساسية</label>
+                        <textarea id="basicSkills" name="basic_skills" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aboutMe">نبذة قصيرة عن نفسك</label>
+                        <textarea id="aboutMe" name="about_me" rows="4" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>تفاصيل الوظيفة المطلوبة</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="desiredSalary">الراتب المرغوب فيه (جنيه مصري)</label>
+                            <input type="text" id="desiredSalary" name="desired_salary" placeholder="مثال: من 4000 إلى 6000 جنيه">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="workPeriodFromHour">من الساعة</label>
+                            <div style="display: flex; gap: 10px;">
+                                <select id="workPeriodFromHour" name="work_period_from_hour" onchange="calculateWorkHours()" style="flex: 2;">
+                                    <option value="">اختر الساعة</option>
+                                </select>
+                                <select id="workPeriodFromPeriod" name="work_period_from_period" onchange="calculateWorkHours()" style="flex: 1;">
+                                    <option value="صباحاً">صباحاً</option>
+                                    <option value="مساءً">مساءً</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="workPeriodToHour">إلى الساعة</label>
+                            <div style="display: flex; gap: 10px;">
+                                <select id="workPeriodToHour" name="work_period_to_hour" onchange="calculateWorkHours()" style="flex: 2;">
+                                    <option value="">اختر الساعة</option>
+                                </select>
+                                <select id="workPeriodToPeriod" name="work_period_to_period" onchange="calculateWorkHours()" style="flex: 1;">
+                                    <option value="صباحاً">صباحاً</option>
+                                    <option value="مساءً">مساءً</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="workHours">⏱️ عدد ساعات العمل اليومية</label>
+                            <input type="number" id="workHours" name="work_hours" min="1" max="24" readonly placeholder="سيتم حسابها تلقائياً" style="background: #f0f8ff; font-weight: bold;">
+                        </div>
+                    </div>
+
+                    <script>
+                    // تهيئة قوائم الساعات عند تحميل الصفحة
+                    function initializeHourSelects() {
+                        const hourSelects = ['workPeriodFromHour', 'workPeriodToHour'];
+                        hourSelects.forEach(id => {
+                            const select = document.getElementById(id);
+                            for (let i = 1; i <= 12; i++) {
+                                const option = document.createElement('option');
+                                option.value = String(i).padStart(2, '0');
+                                option.textContent = String(i).padStart(2, '0') + ':00';
+                                select.appendChild(option);
+                            }
+                        });
+                    }
+
+                    function calculateWorkHours() {
+                        const fromHour = document.getElementById("workPeriodFromHour").value;
+                        const fromPeriod = document.getElementById("workPeriodFromPeriod").value;
+                        const toHour = document.getElementById("workPeriodToHour").value;
+                        const toPeriod = document.getElementById("workPeriodToPeriod").value;
+                        const hoursInput = document.getElementById("workHours");
+
+                        if (fromHour && toHour) {
+                            let fromH = parseInt(fromHour);
+                            let toH = parseInt(toHour);
+                            
+                            // تحويل إلى صيغة 24 ساعة
+                            if (fromPeriod === "مساءً" && fromH !== 12) fromH += 12;
+                            if (fromPeriod === "صباحاً" && fromH === 12) fromH = 0;
+                            
+                            if (toPeriod === "مساءً" && toH !== 12) toH += 12;
+                            if (toPeriod === "صباحاً" && toH === 12) toH = 0;
+                            
+                            let diff = toH - fromH;
+                            if (diff < 0) diff += 24;
+                            hoursInput.value = diff.toFixed(2);
+                        } else {
+                            hoursInput.value = '';
+                        }
+                    }
+
+                    // تهيئة الساعات عند تحميل الصفحة
+                    document.addEventListener('DOMContentLoaded', initializeHourSelects);
+                    </script>
+
+                    <div class="form-group">
+                        <label>نوع الوظيفة المطلوبة</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="job_type" value="دوام كامل" required>
+                                <span>دوام كامل</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="job_type" value="دوام جزئي">
+                                <span>دوام جزئي</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="job_type" value="تدريب">
+                                <span>تدريب</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="job_type" value="عمل حر">
+                                <span>عمل حر (Freelance)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="Upload_id.html" class="btn btn-secondary">رجوع</a>
+                    <button type="submit" class="btn btn-primary">التالي</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/personal_info.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

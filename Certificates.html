@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الشهادات والدورات - الخطوة 4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step completed"><span>1</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed"><span>2</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed"><span>3</span></div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active"><span>4</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>5</span></div>
+        </div>
+
+        <div class="form-container">
+            <h1>الخطوة 4: الشهادات والدورات</h1>
+
+            <div class="form-section">
+                <h2>📄 شهادات الخبرة والدورات التدريبية</h2>
+                <p class="section-description">أضف شهاداتك ودوراتك التدريبية (اختياري)</p>
+
+                <div id="certificatesList" class="certificates-list"></div>
+
+                <button type="button" id="addCertificateBtn" class="btn btn-secondary">➕ إضافة شهادة جديدة</button>
+
+                <div id="certificateForm" class="certificate-form" style="display: none; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-top: 15px; background: #f9f9f9;">
+                    <h3>بيانات الشهادة الجديدة</h3>
+                    <form id="newCertificateForm">
+                        <div class="form-group">
+                            <label for="certName">اسم الشهادة أو الدورة *</label>
+                            <input type="text" id="certName" name="cert_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issuingAuthority">الجهة المانحة *</label>
+                            <input type="text" id="issuingAuthority" name="issuing_authority" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="issueDate">تاريخ الحصول عليها *</label>
+                            <input type="date" id="issueDate" name="issue_date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="certFile">رفع ملف الشهادة (PDF أو صورة) *</label>
+                            <input type="file" id="certFile" name="certificate_file" accept=".pdf,image/*" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="cancelCertBtn" class="btn btn-secondary">إلغاء</button>
+                            <button type="submit" id="submitBtn" class="btn btn-primary">حفظ الشهادة</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="form-actions main-nav">
+                <a href="Personal_info.html" class="btn btn-secondary">رجوع</a>
+                <button type="button" id="continueBtn" class="btn btn-primary">التالي</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/certificates.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

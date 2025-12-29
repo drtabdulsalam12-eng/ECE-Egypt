@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال البيانات يدوياً - الخطوة 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step active"><span>1</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>2</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>3</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>4</span></div>
+            <div class="progress-line"></div>
+            <div class="progress-step"><span>5</span></div>
+        </div>
+
+        <div class="form-container">
+            <h1>الخطوة 1: إدخال البيانات الأساسية</h1>
+            <p class="step-description">قم بإدخال بياناتك الشخصية يدوياً</p>
+
+            <form id="manualEntryForm">
+                <div class="form-section">
+                    <h3>البيانات الأساسية</h3>
+
+                    <div class="form-group">
+                        <label for="nationalId">الرقم القومي *</label>
+                        <input type="text" id="nationalId" name="national_id" required 
+                               pattern="[2-3][0-9]{13}" 
+                               maxlength="14"
+                               placeholder="أدخل الرقم القومي (14 رقم)">
+                        <small style="color: #546e7a; display: block; margin-top: 5px;">الرقم القومي يجب أن يكون 14 رقم</small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birthDate">تاريخ الميلاد</label>
+                            <input type="text" id="birthDate" name="birth_date" readonly placeholder="سيُملأ تلقائياً من الرقم القومي">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">السن</label>
+                            <input type="number" id="age" name="age" readonly placeholder="سيُملأ تلقائياً">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idCardFile">البطاقة الشخصية (الرقم القومي) *</label>
+                        <input type="file" id="idCardFile" name="idCardFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <small style="color: #546e7a; display: block; margin-top: 5px;">قم برفع صورة أو ملف PDF لبطاقتك الشخصية</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="governorate">مكان الميلاد *</label>
+                        <select id="governorate" name="governorate" required>
+                            <option value="">اختر المحافظة</option>
+                            <option value="القاهرة">القاهرة</option>
+                            <option value="الإسكندرية">الإسكندرية</option>
+                            <option value="بورسعيد">بورسعيد</option>
+                            <option value="السويس">السويس</option>
+                            <option value="دمياط">دمياط</option>
+                            <option value="الدقهلية">الدقهلية</option>
+                            <option value="الشرقية">الشرقية</option>
+                            <option value="القليوبية">القليوبية</option>
+                            <option value="كفر الشيخ">كفر الشيخ</option>
+                            <option value="الغربية">الغربية</option>
+                            <option value="المنوفية">المنوفية</option>
+                            <option value="البحيرة">البحيرة</option>
+                            <option value="الإسماعيلية">الإسماعيلية</option>
+                            <option value="الجيزة">الجيزة</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="قنا">قنا</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="البحر الأحمر">البحر الأحمر</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="مطروح">مطروح</option>
+                            <option value="شمال سيناء">شمال سيناء</option>
+                            <option value="جنوب سيناء">جنوب سيناء</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <div class="form-actions">
+                    <a href="Upload_id.html" class="btn btn-secondary">رجوع</a>
+                    <button type="submit" class="btn btn-primary">التالي</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const nationalIdInput = document.getElementById('nationalId');
+        const birthDateInput = document.getElementById('birthDate');
+        const ageInput = document.getElementById('age');
+        const governorateSelect = document.getElementById('governorate');
+        const errorMessage = document.getElementById('errorMessage');
+
+        const governorates = {
+            '01': 'القاهرة',
+            '02': 'الإسكندرية',
+            '03': 'بورسعيد',
+            '04': 'السويس',
+            '11': 'دمياط',
+            '12': 'الدقهلية',
+            '13': 'الشرقية',
+            '14': 'القليوبية',
+            '15': 'كفر الشيخ',
+            '16': 'الغربية',
+            '17': 'المنوفية',
+            '18': 'البحيرة',
+            '19': 'الإسماعيلية',
+            '21': 'الجيزة',
+            '22': 'بني سويف',
+            '23': 'الفيوم',
+            '24': 'المنيا',
+            '25': 'أسيوط',
+            '26': 'سوهاج',
+            '27': 'قنا',
+            '28': 'أسوان',
+            '29': 'الأقصر',
+            '31': 'البحر الأحمر',
+            '32': 'الوادي الجديد',
+            '33': 'مطروح',
+            '34': 'شمال سيناء',
+            '35': 'جنوب سيناء'
+        };
+
+        nationalIdInput.addEventListener('input', function() {
+            const nationalId = this.value;
+
+            if (nationalId.length === 14) {
+                try {
+                    const century = nationalId[0] === '2' ? '19' : '20';
+                    const year = century + nationalId.substr(1, 2);
+                    const month = nationalId.substr(3, 2);
+                    const day = nationalId.substr(5, 2);
+
+                    birthDateInput.value = `${year}-${month}-${day}`;
+
+                    calculateAge();
+
+                    const govCode = nationalId.substr(7, 2);
+                    if (governorates[govCode]) {
+                        governorateSelect.value = governorates[govCode];
+                    }
+
+                    errorMessage.style.display = 'none';
+                } catch (e) {
+                    errorMessage.textContent = 'الرقم القومي غير صحيح';
+                    errorMessage.style.display = 'block';
+                }
+            }
+        });
+
+        birthDateInput.addEventListener('change', calculateAge);
+
+        function calculateAge() {
+            const birthDate = new Date(birthDateInput.value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            ageInput.value = age;
+        }
+
+        document.getElementById('manualEntryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const nationalId = nationalIdInput.value;
+            const birthDate = birthDateInput.value;
+            const age = ageInput.value;
+            const idCardFile = document.getElementById('idCardFile').files[0];
+
+            if (nationalId.length !== 14) {
+                errorMessage.textContent = 'الرقم القومي يجب أن يكون 14 رقم';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            if (!nationalId.match(/^[2-3][0-9]{13}$/)) {
+                errorMessage.textContent = 'الرقم القومي غير صحيح';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            if (!birthDate || !age) {
+                errorMessage.textContent = 'يرجى إدخال الرقم القومي كاملاً (14 رقم) ليتم حساب تاريخ الميلاد والسن تلقائياً';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            if (parseInt(age) < 18) {
+                errorMessage.textContent = 'عذراً، يجب أن يكون عمرك 18 سنة على الأقل للتسجيل';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            if (!idCardFile) {
+                errorMessage.textContent = 'يرجى رفع البطاقة الشخصية';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            // التحقق من نوع الملف
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+            if (!allowedTypes.includes(idCardFile.type)) {
+                errorMessage.textContent = 'نوع الملف غير مدعوم. يرجى رفع ملف PDF أو صورة (JPG, PNG)';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            // تحويل الملف إلى Base64 وحفظ
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('manualEntryData', JSON.stringify({
+                    nationalId: nationalId,
+                    birthDate: birthDate,
+                    age: age,
+                    governorate: governorateSelect.value
+                }));
+                
+                localStorage.setItem('idCardFile', e.target.result);
+                localStorage.setItem('idCardFileName', idCardFile.name);
+
+                window.location.href = 'Personal_info.html';
+            };
+            reader.readAsDataURL(idCardFile);
+        });
+    </script>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/contact.js"></script>
+</body>
+</html>

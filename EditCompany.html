@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل بيانات الشركة - ECE Egypt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .edit-container {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 10px;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>جاري المعالجة...</p>
+    </div>
+
+    <div class="container">
+        <div class="form-container" style="max-width: 800px;">
+            <h1>تعديل بيانات الشركة</h1>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="editCompanyForm">
+                <!-- المعلومات الأساسية -->
+                <div class="edit-container">
+                    <h2 class="section-title">المعلومات الأساسية</h2>
+                    
+                    <div class="form-group">
+                        <label>لوجو الشركة <span style="color: red;">*</span></label>
+                        <div class="upload-area-small" id="logoUploadArea">
+                            <input type="file" id="companyLogo" accept="image/*">
+                            <p>اضغط لتحديث اللوجو</p>
+                        </div>
+                        <div id="logoPreview" class="photo-preview"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>تاريخ بدأت النشاط <span style="color: red;">*</span></label>
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>طبيعة العمل <span style="color: red;">*</span></label>
+                            <select id="businessNature" required>
+                                <option value="online">أونلاين</option>
+                                <option value="offline">أوفلاين</option>
+                                <option value="both">كلاهما</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>الموقع الإلكتروني <span style="color: red;">*</span></label>
+                            <input type="url" id="website" placeholder="https://example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف الرسمي (11 رقم) <span style="color: red;">*</span></label>
+                            <input type="tel" id="officialPhone" pattern="[0-9]{11}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>العنوان الكامل <span style="color: red;">*</span></label>
+                        <input type="text" id="fullAddress" placeholder="شارع، مدينة، محافظة" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>من الساعة <span style="color: red;">*</span></label>
+                            <input type="time" id="workingHoursFrom" required>
+                        </div>
+                        <div class="form-group">
+                            <label>إلى الساعة <span style="color: red;">*</span></label>
+                            <input type="time" id="workingHoursTo" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>أيام العمل الرسمية <span style="color: red;">*</span></label>
+                        <input type="text" id="workingDays" placeholder="مثلاً: السبت - الخميس" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>نبذة مختصرة عن الشركة <span style="color: red;">*</span></label>
+                        <textarea id="companyDescription" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>وسائل تواصل إضافية (واتساب، تليجرام - اختياري)</label>
+                        <input type="text" id="additionalSocial">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="Search.html" class="btn btn-secondary">إلغاء</a>
+                    <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/edit_company.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

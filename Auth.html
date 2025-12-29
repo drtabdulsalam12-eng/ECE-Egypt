@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECE-Egypt - تسجيل الدخول</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="logo">
+                <h1>ECE-Egypt</h1>
+                <p>منصة التوظيف الإلكترونية</p>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="login">تسجيل الدخول</button>
+                <button class="tab-btn" data-tab="register">إنشاء حساب جديد</button>
+            </div>
+
+            <div id="login-tab" class="tab-content active">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="login-email" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="login-password" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="user-type-selector">
+                        <label>نوع الحساب:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="login-user-type" value="jobseeker" checked>
+                                <span>باحث عن وظيفة</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="login-user-type" value="company">
+                                <span>شركة</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">تسجيل الدخول</button>
+                    
+                    <div class="form-footer">
+                        <a href="#" id="forgot-password">نسيت كلمة المرور؟</a>
+                    </div>
+                </form>
+            </div>
+
+            <div id="register-tab" class="tab-content">
+                <div class="user-type-selector" style="margin-bottom: 20px;">
+                    <label>اختر نوع الحساب:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="register-user-type" value="jobseeker" checked>
+                            <span>باحث عن وظيفة</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="register-user-type" value="company">
+                            <span>شركة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <form id="register-form">
+                    <div class="form-group">
+                        <label id="name-label">الاسم الكامل</label>
+                        <input type="text" id="register-name" autocomplete="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="register-email" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="register-phone" autocomplete="tel" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <input type="password" id="register-password" autocomplete="new-password" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <input type="password" id="register-password-confirm" autocomplete="new-password" required minlength="6">
+                    </div>
+
+                    <button type="submit" class="btn-primary">إنشاء الحساب وإرسال كود التحقق</button>
+                </form>
+            </div>
+
+            <div id="verification-tab" class="tab-content" style="display: none;">
+                <h2>إدخال كود التحقق</h2>
+                <p>تم إرسال كود التحقق إلى بريدك الإلكتروني</p>
+                
+                <form id="verification-form">
+                    <div class="form-group">
+                        <label>كود التحقق (6 أرقام)</label>
+                        <input type="text" id="verification-code" autocomplete="one-time-code" required maxlength="6" pattern="[0-9]{6}">
+                    </div>
+
+                    <button type="submit" class="btn-primary">تحقق الآن</button>
+                    
+                    <div class="form-footer">
+                        <a href="#" id="resend-code">إعادة إرسال الكود</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>جاري المعالجة...</p>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/Auth.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

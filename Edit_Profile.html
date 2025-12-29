@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الملف الشخصي - ECE Egypt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .edit-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section-title {
+            color: #17a2b8;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>جاري المعالجة...</p>
+    </div>
+
+    <div class="edit-container">
+        <h1>تعديل الملف الشخصي</h1>
+        
+        <form id="editProfileForm">
+            <!-- البيانات الأساسية -->
+            <div class="form-section">
+                <h3 class="section-title">👤 البيانات الأساسية</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الاسم الكامل <span style="color: red;">*</span></label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني (غير قابل للتعديل)</label>
+                        <input type="email" id="email" disabled>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>صورتك الشخصية</label>
+                    <div class="upload-area-small">
+                        <input type="file" id="profilePhoto" accept="image/*">
+                        <p>اضغط لتغيير صورتك</p>
+                    </div>
+                    <div id="photoPreview" class="photo-preview" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- البيانات الشخصية -->
+            <div class="form-section">
+                <h3 class="section-title">📍 البيانات الشخصية</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المحافظة</label>
+                        <input type="text" id="governorate">
+                    </div>
+                    <div class="form-group">
+                        <label>الإقامة</label>
+                        <input type="text" id="residence">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>رقم البريد</label>
+                    <input type="text" id="postalCode">
+                </div>
+            </div>
+
+            <!-- البيانات التعليمية -->
+            <div class="form-section">
+                <h3 class="section-title">🎓 البيانات التعليمية</h3>
+                
+                <div class="form-group">
+                    <label>المستوى الدراسي الحالي</label>
+                    <select id="educationLevel">
+                        <option value="">اختر المستوى</option>
+                        <option value="ثانوية عامة">ثانوية عامة</option>
+                        <option value="دبلوم">دبلوم</option>
+                        <option value="بكالوريوس">بكالوريوس</option>
+                        <option value="ماجستير">ماجستير</option>
+                        <option value="دكتوراه">دكتوراه</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الجامعة / الكلية</label>
+                        <input type="text" id="college">
+                    </div>
+                    <div class="form-group">
+                        <label>المدرسة الثانوية</label>
+                        <input type="text" id="highSchool">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>التخصص</label>
+                    <input type="text" id="fieldOfStudy">
+                </div>
+            </div>
+
+            <!-- تفاصيل الوظيفة المطلوبة -->
+            <div class="form-section">
+                <h3 class="section-title">💼 تفاصيل الوظيفة المطلوبة</h3>
+                
+                <div class="form-group">
+                    <label>الراتب المرغوب (بالجنيه المصري)</label>
+                    <input type="text" id="desiredSalary" placeholder="مثال: من 4000 إلى 6000">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>من الساعة</label>
+                        <select id="workFromHour" onchange="calculateWorkHours()">
+                            <option value="">اختر الساعة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>إلى الساعة</label>
+                        <select id="workToHour" onchange="calculateWorkHours()">
+                            <option value="">اختر الساعة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>⏱️ عدد ساعات العمل اليومية</label>
+                    <input type="number" id="workHours" readonly placeholder="سيتم حسابها تلقائياً" style="background: #f0f8ff; font-weight: bold;">
+                </div>
+            </div>
+
+            <!-- المهارات -->
+            <div class="form-section">
+                <h3 class="section-title">🎯 المهارات</h3>
+                <div id="skillsList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;"></div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <input type="text" id="newSkill" placeholder="أدخل مهارة جديدة">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addSkill()" style="margin-top: 20px;">إضافة مهارة</button>
+                </div>
+            </div>
+
+            <!-- اللغات -->
+            <div class="form-section">
+                <h3 class="section-title">🌐 اللغات</h3>
+                <div id="languagesList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;"></div>
+                <div class="form-group">
+                    <label>اللغة</label>
+                    <input type="text" id="newLanguage" placeholder="مثال: الإنجليزية">
+                </div>
+                <div class="form-group">
+                    <label>مستوى الإجادة</label>
+                    <select id="languageProficiency">
+                        <option value="">اختر المستوى</option>
+                        <option value="ضعيف">ضعيف</option>
+                        <option value="متوسط">متوسط</option>
+                        <option value="متقدم">متقدم</option>
+                        <option value="احترافي">احترافي</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addLanguage()">إضافة لغة</button>
+            </div>
+
+            <!-- الشهادات -->
+            <div class="form-section">
+                <h3 class="section-title">📜 الشهادات والملفات</h3>
+                <div id="certificatesList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;"></div>
+                <div class="form-group">
+                    <label>اسم الشهادة</label>
+                    <input type="text" id="certName" placeholder="مثال: شهادة Google Analytics">
+                </div>
+                <div class="form-group">
+                    <label>ملف الشهادة (PDF)</label>
+                    <input type="file" id="certFile" accept=".pdf">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addCertificate()">إضافة شهادة</button>
+            </div>
+
+            <!-- الأزرار -->
+            <div class="form-actions">
+                <a href="Profile.html" class="btn btn-secondary">إلغاء</a>
+                <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="contact-float" id="contactButton">
+        <div class="icon">💬</div>
+    </div>
+
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2>تواصل معنا</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="text">
+                        <strong>البريد الإلكتروني:</strong><br>
+                        <a href="mailto:dr.t.abdulsalam12@gmail.com">dr.t.abdulsalam12@gmail.com</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="text">
+                        <strong>ساعات العمل:</strong><br>
+                        الأحد - الخميس: 10 صباحاً - 6 مساءً
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSkills = [];
+        let currentLanguages = [];
+        let currentCertificates = [];
+
+        // تهيئة قوائم الساعات عند تحميل الصفحة
+        function initializeHourSelects() {
+            const hourSelects = ['workFromHour', 'workToHour'];
+            hourSelects.forEach(id => {
+                const select = document.getElementById(id);
+                for (let i = 0; i < 24; i++) {
+                    const option = document.createElement('option');
+                    option.value = String(i).padStart(2, '0');
+                    option.textContent = String(i).padStart(2, '0') + ':00';
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function calculateWorkHours() {
+            const fromHour = document.getElementById('workFromHour').value;
+            const toHour = document.getElementById('workToHour').value;
+            const hoursInput = document.getElementById('workHours');
+
+            if (fromHour && toHour) {
+                const fromH = parseInt(fromHour);
+                const toH = parseInt(toHour);
+                let diff = toH - fromH;
+                if (diff < 0) diff += 24;
+                hoursInput.value = diff.toFixed(2);
+            } else {
+                hoursInput.value = '';
+            }
+        }
+
+        // تهيئة الساعات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', initializeHourSelects);
+
+        function addSkill() {
+            const skillInput = document.getElementById('newSkill');
+            const skill = skillInput.value.trim();
+            if (!skill) {
+                alert('يرجى إدخال المهارة');
+                return;
+            }
+            currentSkills.push(skill);
+            skillInput.value = '';
+            renderSkills();
+        }
+
+        function removeSkill(index) {
+            currentSkills.splice(index, 1);
+            renderSkills();
+        }
+
+        function renderSkills() {
+            const list = document.getElementById('skillsList');
+            list.innerHTML = currentSkills.map((skill, i) => `
+                <div style="background: #e8f4f8; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span>${skill}</span>
+                    <button type="button" onclick="removeSkill(${i})" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">×</button>
+                </div>
+            `).join('');
+        }
+
+        function addLanguage() {
+            const langInput = document.getElementById('newLanguage');
+            const profInput = document.getElementById('languageProficiency');
+            const lang = langInput.value.trim();
+            const prof = profInput.value;
+            
+            if (!lang || !prof) {
+                alert('يرجى إدخال اللغة ومستوى الإجادة');
+                return;
+            }
+            currentLanguages.push({ name: lang, proficiency_level: prof });
+            langInput.value = '';
+            profInput.value = '';
+            renderLanguages();
+        }
+
+        function removeLanguage(index) {
+            currentLanguages.splice(index, 1);
+            renderLanguages();
+        }
+
+        function renderLanguages() {
+            const list = document.getElementById('languagesList');
+            list.innerHTML = currentLanguages.map((lang, i) => `
+                <div style="background: #fff3cd; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span>${lang.name} (${lang.proficiency_level})</span>
+                    <button type="button" onclick="removeLanguage(${i})" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">×</button>
+                </div>
+            `).join('');
+        }
+
+        function addCertificate() {
+            const nameInput = document.getElementById('certName');
+            const fileInput = document.getElementById('certFile');
+            const name = nameInput.value.trim();
+            const file = fileInput.files[0];
+            
+            if (!name) {
+                alert('يرجى إدخال اسم الشهادة');
+                return;
+            }
+            
+            currentCertificates.push({ name: name, file: file });
+            nameInput.value = '';
+            fileInput.value = '';
+            renderCertificates();
+        }
+
+        function removeCertificate(index) {
+            currentCertificates.splice(index, 1);
+            renderCertificates();
+        }
+
+        function renderCertificates() {
+            const list = document.getElementById('certificatesList');
+            list.innerHTML = currentCertificates.map((cert, i) => `
+                <div style="background: #d4edda; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span>📄 ${cert.name}</span>
+                    <button type="button" onclick="removeCertificate(${i})" style="background: none; border: none; color: red; cursor: pointer; font-weight: bold;">×</button>
+                </div>
+            `).join('');
+        }
+    </script>
+
+    <script src="js/edit_profile.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث عن وظائف - ECE Egypt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div style="position: fixed; top: 10px; right: 10px; z-index: 1000; display: flex; gap: 10px;">
+        <a href="Edit_Profile.html" style="background: #2196F3; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-size: 12px; font-family: Cairo, sans-serif;">تعديل الملف</a>
+        <a href="Auth.html" onclick="localStorage.clear(); sessionStorage.clear(); return true;" style="background: #f44336; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-size: 12px; font-family: Cairo, sans-serif;">خروج</a>
+    </div>
+    <div id="root"></div>
+
+    <!-- React and Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+
+        const MOCK_DATA = [
+            { id: 1, type: 'employee', name: 'أحمد محمد', avatar: 'https://i.pravatar.cc/150?u=1', trustScore: 95, rating: 4.5, schedule: 'صباحي', salary: 5000, jobType: 'دوام كامل' },
+            { id: 2, type: 'company', name: 'شركة التقنية العربية', avatar: 'https://i.pravatar.cc/150?u=2', trustScore: 88, rating: 4.0, schedule: 'كامل', salary: 15000, jobType: 'هندسة' },
+            { id: 3, type: 'employee', name: 'سارة محمود', avatar: 'https://i.pravatar.cc/150?u=3', trustScore: 92, rating: 4.8, schedule: 'مسائي', salary: 4000, jobType: 'دوام جزئي' },
+            { id: 4, type: 'company', name: 'المتحدة للخدمات', avatar: 'https://i.pravatar.cc/150?u=4', trustScore: 85, rating: 3.5, schedule: 'صباحي', salary: 10000, jobType: 'تسويق' },
+            { id: 5, type: 'employee', name: 'خالد علي', avatar: 'https://i.pravatar.cc/150?u=5', trustScore: 78, rating: 4.2, schedule: 'كامل', salary: 7000, jobType: 'دوام كامل' },
+            { id: 6, type: 'company', name: 'نور للإستشارات', avatar: 'https://i.pravatar.cc/150?u=6', trustScore: 90, rating: 4.7, schedule: 'مسائي', salary: 12000, jobType: 'إدارة' },
+        ];
+
+        const JobSearchPage = () => {
+            const [searchTerm, setSearchTerm] = useState('');
+            const [activeTab, setActiveTab] = useState('search');
+            const [filters, setFilters] = useState({ schedule: '', salary: '', jobType: '', type: '', gender: '' });
+            const [userData, setUserData] = useState(null);
+            const [friends, setFriends] = useState([]);
+            const [allData, setAllData] = useState([]);
+            const [selectedProfile, setSelectedProfile] = useState(null);
+
+            useEffect(() => {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                setUserData(user);
+                fetchData();
+            }, []);
+
+            const fetchData = async () => {
+                try {
+                    const [userRes, companyRes] = await Promise.all([
+                        fetch('/api/users/random'),
+                        fetch('/api/companies/random')
+                    ]);
+                    const users = await userRes.json();
+                    const companies = await companyRes.json();
+                    
+                    const combined = [
+                        ...(users.users || []).map(u => ({ ...u, type: 'employee', avatar: u.avatar || null })),
+                        ...(companies.companies || []).map(c => ({ ...c, name: c.companyName, type: 'company', avatar: c.logo || null }))
+                    ];
+                    setAllData(combined);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            const handleAddFriend = async (friendId) => {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch('/api/users/add-friend', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ friendId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('تم إضافة الصديق بنجاح');
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    alert('حدث خطأ أثناء إضافة الصديق');
+                }
+            };
+
+            const filteredData = useMemo(() => {
+                return allData.filter(item => {
+                    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+                    const matchesSchedule = !filters.schedule || item.schedule === filters.schedule;
+                    const matchesSalary = !filters.salary || item.salary >= parseInt(filters.salary);
+                    const matchesJobType = !filters.jobType || item.jobType === filters.jobType;
+                    const matchesType = !filters.type || item.type === filters.type;
+                    const matchesGender = !filters.gender || item.gender === filters.gender;
+                    return matchesSearch && matchesSchedule && matchesSalary && matchesJobType && matchesType && matchesGender;
+                });
+            }, [searchTerm, filters, allData]);
+
+            const StarIcon = ({ fill }) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star text-yellow-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            );
+
+            const renderStars = (rating = 4) => (
+                <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                        <StarIcon key={i} fill={i < Math.floor(rating) ? "currentColor" : "none"} />
+                    ))}
+                </div>
+            );
+
+            const renderSearch = () => (
+                <>
+                    {selectedProfile ? (
+                        <div className="p-6">
+                            <button onClick={() => setSelectedProfile(null)} className="mb-4 text-blue-600 font-bold">← عودة للبحث</button>
+                            <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 space-y-4 text-right">
+                                {selectedProfile.avatar ? (
+                                    <img src={selectedProfile.avatar} className="w-24 h-24 rounded-full mx-auto border-4 border-blue-50 object-cover" />
+                                ) : (
+                                    <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold mx-auto mb-4">
+                                        {selectedProfile.name[0]}
+                                    </div>
+                                )}
+                                <h3 className="text-xl font-bold text-center">{selectedProfile.name}</h3>
+                                <p className="text-gray-500 text-center mb-6">{selectedProfile.email}</p>
+                                
+                                <div className="space-y-4 border-t pt-4">
+                                    <h4 className="font-bold text-blue-600">معلومات أساسية</h4>
+                                    <p><strong>المحافظة:</strong> {selectedProfile.governorate}</p>
+                                    <p><strong>رقم الهاتف:</strong> {selectedProfile.phone}</p>
+                                    <p><strong>البريد الإلكتروني:</strong> {selectedProfile.email}</p>
+                                    <p><strong>الجنس:</strong> {selectedProfile.gender === 'male' ? 'ذكر' : selectedProfile.gender === 'female' ? 'أنثى' : 'غير محدد'}</p>
+                                    <p><strong>رقم البريد:</strong> {selectedProfile.postalCode || 'غير متوفر'}</p>
+                                    <p>💬 <a href="mailto:dr.t.abdulsalam12@gmail.com" style={{color: '#0066cc', textDecoration: 'none', fontWeight: 'bold'}}>اتصل بنا: dr.t.abdulsalam12@gmail.com</a> | ⏰ الأحد-الخميس: 10 ص - 6 م</p>
+                                    
+                                    {selectedProfile.type === 'employee' ? (
+                                        <>
+                                            <p><strong>الرقم القومي:</strong> {selectedProfile.nationalId || 'غير متوفر'}</p>
+                                            
+                                            <h4 className="font-bold text-blue-600 border-t pt-4">البيانات التعليمية</h4>
+                                            <p><strong>الكلية/الجامعة:</strong> {selectedProfile.college || 'غير محدد'}</p>
+                                            <p><strong>المدرسة الثانوية:</strong> {selectedProfile.highSchool || 'غير محدد'}</p>
+                                            
+                                            <h4 className="font-bold text-blue-600 border-t pt-4">بيانات العمل</h4>
+                                            <p><strong>الراتب المتوقع:</strong> {selectedProfile.desiredSalary || 0} ج.م</p>
+                                            <p><strong>ساعات العمل:</strong> من {selectedProfile.workFrom || '--'} إلى {selectedProfile.workTo || '--'} ({selectedProfile.workHours || 0} ساعة)</p>
+                                            
+                                            <h4 className="font-bold text-blue-600 border-t pt-4">المهارات واللغات</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedProfile.skills?.map((s, i) => <span key={i} className="bg-blue-50 px-2 py-1 rounded-lg text-xs">{s}</span>)}
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {selectedProfile.languages?.map((l, i) => <span key={i} className="bg-green-50 px-2 py-1 rounded-lg text-xs">{l}</span>)}
+                                            </div>
+
+                                            <h4 className="font-bold text-blue-600 border-t pt-4">الشهادات</h4>
+                                            <ul className="list-disc list-inside text-sm">
+                                                {selectedProfile.certificates?.map((c, i) => <li key={i}>{c}</li>)}
+                                                {(!selectedProfile.certificates || selectedProfile.certificates.length === 0) && <li>لا توجد شهادات مسجلة</li>}
+                                            </ul>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h4 className="font-bold text-blue-600 border-t pt-4">بيانات الشركة</h4>
+                                            <p><strong>مجال العمل:</strong> {selectedProfile.field || 'غير محدد'}</p>
+                                            <p><strong>عدد الموظفين:</strong> {selectedProfile.employeesCount || 0}</p>
+                                        </>
+                                    )}
+                                </div>
+                                <button onClick={() => handleAddFriend(selectedProfile._id)} className="w-full py-4 bg-[#001f3f] text-white rounded-2xl font-bold shadow-lg mt-6">إضافة كصديق</button>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="bg-[#001f3f] p-6 text-white rounded-b-3xl shadow-lg">
+                                <h1 className="text-2xl font-bold mb-4 text-center">البحث عن عمل</h1>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="ابحث عن شركة أو موظف..."
+                                        className="w-full p-4 pr-12 rounded-2xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-inner"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <div className="absolute right-4 top-4 text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                                <select className="bg-white p-2 rounded-xl text-sm border border-gray-200" onChange={(e) => setFilters({...filters, schedule: e.target.value})}>
+                                    <option value="">الوقت</option>
+                                    <option value="صباحي">صباحي</option>
+                                    <option value="مسائي">مسائي</option>
+                                    <option value="كامل">كامل</option>
+                                </select>
+                                <select className="bg-white p-2 rounded-xl text-sm border border-gray-200" onChange={(e) => setFilters({...filters, salary: e.target.value})}>
+                                    <option value="">الراتب</option>
+                                    <option value="3000">3000+</option>
+                                    <option value="7000">7000+</option>
+                                    <option value="12000">12000+</option>
+                                </select>
+                                <select className="bg-white p-2 rounded-xl text-sm border border-gray-200" onChange={(e) => setFilters({...filters, jobType: e.target.value})}>
+                                    <option value="">النوع</option>
+                                    <option value="دوام كامل">دوام كامل</option>
+                                    <option value="دوام جزئي">دوام جزئي</option>
+                                    <option value="هندسة">هندسة</option>
+                                </select>
+                                <select className="bg-white p-2 rounded-xl text-sm border border-gray-200" onChange={(e) => setFilters({...filters, type: e.target.value})}>
+                                    <option value="">التصنيف</option>
+                                    <option value="employee">موظف</option>
+                                    <option value="company">شركة</option>
+                                </select>
+                                <select className="bg-white p-2 rounded-xl text-sm border border-gray-200" onChange={(e) => setFilters({...filters, gender: e.target.value})}>
+                                    <option value="">الجنس</option>
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+
+                            <div className="p-4 space-y-4">
+                                {filteredData.map((item) => (
+                                    <div key={item._id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition-shadow">
+                                        <div className="flex items-center gap-4 cursor-pointer" onClick={() => setSelectedProfile(item)}>
+                                            {item.avatar ? (
+                                                <img src={item.avatar} alt={item.name} className="w-16 h-16 rounded-full border-2 border-blue-100 object-cover" />
+                                            ) : (
+                                                <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                                    {item.name[0]}
+                                                </div>
+                                            )}
+                                            <div className="space-y-1">
+                                                <h3 className="font-bold text-gray-800">{item.name}</h3>
+                                                    {renderStars()}
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleAddFriend(item._id)} className="p-2 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </>
+            );
+
+            const renderFriends = () => (
+                <div className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-[#001f3f]">قائمة الأصدقاء</h2>
+                    {userData?.friends && userData.friends.length > 0 ? (
+                        <div className="space-y-4">
+                            {userData.friends.map(friendId => {
+                                const friend = allData.find(d => d._id === friendId);
+                                if (!friend) return null;
+                                return (
+                                    <div key={friend._id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            {friend.avatar ? (
+                                                <img src={friend.avatar} alt={friend.name} className="w-14 h-14 rounded-full object-cover" />
+                                            ) : (
+                                                <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold">
+                                                    {friend.name[0]}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h3 className="font-bold text-gray-800">{friend.name}</h3>
+                                                <p className="text-xs text-gray-500">{friend.type === 'company' ? 'شركة' : 'موظف'}</p>
+                                            </div>
+                                        </div>
+                                        <button className="text-blue-600 font-bold text-sm">مراسلة</button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="text-center mt-20">
+                            <div className="text-4xl mb-4">👥</div>
+                            <p className="text-gray-500">لا يوجد أصدقاء حالياً</p>
+                            <button onClick={() => setActiveTab('search')} className="mt-4 text-blue-600 font-bold">ابحث عن أصدقاء جدد</button>
+                        </div>
+                    )}
+                </div>
+            );
+
+            const [isEditing, setIsEditing] = useState(false);
+
+            const renderProfile = () => (
+                <div className="p-6 space-y-6">
+                    <h2 className="text-2xl font-bold text-[#001f3f] text-center">الملف الشخصي</h2>
+                    <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 space-y-4">
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="relative">
+                                {userData?.avatar || userData?.logo ? (
+                                    <img src={userData.avatar || userData.logo} className="w-24 h-24 rounded-full border-4 border-blue-50 object-cover" />
+                                ) : (
+                                    <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold">
+                                        {(userData?.name || userData?.companyName || '?')[0]}
+                                    </div>
+                                )}
+                                {isEditing && (
+                                    <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                    </button>
+                                )}
+                            </div>
+                            <div className="text-center">
+                                <h3 className="text-xl font-bold text-gray-800">{userData?.name || userData?.companyName || 'مستخدم'}</h3>
+                                <p className="text-gray-500 text-sm">{userData?.email}</p>
+                            </div>
+                        </div>
+
+
+                        <div className="grid grid-cols-1 gap-4 pt-4 text-right border-t">
+                            {isEditing ? (
+                                <>
+                                    <div className="p-4 bg-gray-50 rounded-2xl">
+                                        <label className="text-xs text-gray-400 block mb-1">رقم الهاتف</label>
+                                        <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.phone} />
+                                    </div>
+                                    <div className="p-4 bg-gray-50 rounded-2xl">
+                                        <label className="text-xs text-gray-400 block mb-1">الجنس</label>
+                                        <select className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.gender}>
+                                            <option value="male">ذكر</option>
+                                            <option value="female">أنثى</option>
+                                        </select>
+                                    </div>
+                                    <div className="p-4 bg-gray-50 rounded-2xl">
+                                        <label className="text-xs text-gray-400 block mb-1">رقم البريد</label>
+                                        <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.postalCode} />
+                                    </div>
+                                    <div className="p-4 bg-gray-50 rounded-2xl">
+                                        <label className="text-xs text-gray-400 block mb-1">المحافظة</label>
+                                        <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.governorate} />
+                                    </div>
+                                    {userData?.userType !== 'company' ? (
+                                        <>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">الكلية/الجامعة</label>
+                                                <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.college} />
+                                            </div>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">المدرسة الثانوية</label>
+                                                <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.highSchool} />
+                                            </div>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">الراتب المتوقع</label>
+                                                <input type="number" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.desiredSalary} />
+                                            </div>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">ساعات العمل</label>
+                                                <div className="flex gap-2">
+                                                    <input type="text" className="bg-transparent w-1/2 font-bold focus:outline-none border-b" defaultValue={userData?.workFrom} placeholder="من" />
+                                                    <input type="text" className="bg-transparent w-1/2 font-bold focus:outline-none border-b" defaultValue={userData?.workTo} placeholder="إلى" />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">مجال العمل</label>
+                                                <input type="text" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.field} />
+                                            </div>
+                                            <div className="p-4 bg-gray-50 rounded-2xl">
+                                                <label className="text-xs text-gray-400 block mb-1">عدد الموظفين</label>
+                                                <input type="number" className="bg-transparent w-full font-bold focus:outline-none" defaultValue={userData?.employeesCount} />
+                                            </div>
+                                        </>
+                                    )}
+                                    <div className="flex gap-2 mt-4">
+                                        <button onClick={() => setIsEditing(false)} className="flex-1 py-4 bg-gray-200 text-gray-700 rounded-2xl font-bold">إلغاء</button>
+                                        <button onClick={() => { /* Save Logic */ setIsEditing(false); }} className="flex-2 py-4 bg-blue-600 text-white rounded-2xl font-bold">حفظ</button>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="space-y-4">
+                                        <div className="p-4 bg-gray-50 rounded-2xl">
+                                            <label className="text-xs text-gray-400 block mb-1">الجنس</label>
+                                            <p className="font-bold">{userData?.gender === 'male' ? 'ذكر' : userData?.gender === 'female' ? 'أنثى' : 'غير مسجل'}</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded-2xl">
+                                            <label className="text-xs text-gray-400 block mb-1">رقم البريد</label>
+                                            <p className="font-bold">{userData?.postalCode || 'غير مسجل'}</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded-2xl">
+                                            <label className="text-xs text-gray-400 block mb-1">رقم الهاتف</label>
+                                            <p className="font-bold">{userData?.phone || 'غير مسجل'}</p>
+                                        </div>
+                                        <div className="p-4 bg-gray-50 rounded-2xl">
+                                            <label className="text-xs text-gray-400 block mb-1">المحافظة</label>
+                                            <p className="font-bold">{userData?.governorate || 'غير مسجل'}</p>
+                                        </div>
+                                        {userData?.userType !== 'company' ? (
+                                            <>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">الرقم القومي</label>
+                                                    <p className="font-bold">{userData?.nationalId}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">الكلية/الجامعة</label>
+                                                    <p className="font-bold">{userData?.college || 'غير مسجل'}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">المدرسة الثانوية</label>
+                                                    <p className="font-bold">{userData?.highSchool || 'غير مسجل'}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">الراتب المتوقع</label>
+                                                    <p className="font-bold">{userData?.desiredSalary ? `${userData.desiredSalary} ج.م` : 'غير مسجل'}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">ساعات العمل</label>
+                                                    <p className="font-bold">{userData?.workFrom && userData?.workTo ? `من ${userData.workFrom} إلى ${userData.workTo}` : 'غير مسجل'}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">المهارات</label>
+                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                        {userData?.skills?.map((s, i) => <span key={i} className="bg-blue-100 px-2 py-1 rounded text-xs">{s}</span>)}
+                                                        {(!userData?.skills || userData.skills.length === 0) && <span className="text-gray-400 text-xs">لا يوجد</span>}
+                                                    </div>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">اللغات</label>
+                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                        {userData?.languages?.map((l, i) => <span key={i} className="bg-green-100 px-2 py-1 rounded text-xs">{l}</span>)}
+                                                        {(!userData?.languages || userData.languages.length === 0) && <span className="text-gray-400 text-xs">لا يوجد</span>}
+                                                    </div>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">الشهادات</label>
+                                                    <div className="mt-1">
+                                                        {userData?.certificates?.map((c, i) => <div key={i} className="text-sm font-bold border-b py-1">{c}</div>)}
+                                                        {(!userData?.certificates || userData.certificates.length === 0) && <span className="text-gray-400 text-xs">لا يوجد</span>}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">مجال العمل</label>
+                                                    <p className="font-bold">{userData?.field || 'غير مسجل'}</p>
+                                                </div>
+                                                <div className="p-4 bg-gray-50 rounded-2xl">
+                                                    <label className="text-xs text-gray-400 block mb-1">عدد الموظفين</label>
+                                                    <p className="font-bold">{userData?.employeesCount || 0}</p>
+                                                </div>
+                                            </>
+                                        )}
+                                        <button onClick={() => setIsEditing(true)} className="w-full py-4 bg-[#001f3f] text-white rounded-2xl font-bold shadow-lg mt-4 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                                            تعديل البيانات
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={async () => {
+                                                if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                                                    try {
+                                                        const token = localStorage.getItem('token');
+                                                        const endpoint = userData.userType === 'company' ? '/api/companies/me' : '/api/users/me';
+                                                        const response = await fetch(endpoint, {
+                                                            method: 'DELETE',
+                                                            headers: { 'Authorization': `Bearer ${token}` }
+                                                        });
+                                                        const data = await response.json();
+                                                        if (data.success) {
+                                                            alert('تم حذف الحساب بنجاح');
+                                                            localStorage.clear();
+                                                            window.location.href = '/Auth.html';
+                                                        } else {
+                                                            alert(data.message);
+                                                        }
+                                                    } catch (error) {
+                                                        alert('حدث خطأ أثناء حذف الحساب');
+                                                    }
+                                                }
+                                            }}
+                                            className="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-bold mt-2 hover:bg-red-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                            حذف الحساب نهائياً
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen bg-gray-50 pb-20" dir="rtl">
+                    {activeTab === 'search' && renderSearch()}
+                    {activeTab === 'friends' && renderFriends()}
+                    {activeTab === 'profile' && renderProfile()}
+
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-3 z-50">
+                        <button onClick={() => setActiveTab('search')} className={`flex flex-col items-center gap-1 ${activeTab === 'search' ? 'text-blue-600' : 'text-gray-400'}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <span className="text-xs font-bold">بحث</span>
+                        </button>
+                        <button onClick={() => setActiveTab('friends')} className={`flex flex-col items-center gap-1 ${activeTab === 'friends' ? 'text-blue-600' : 'text-gray-400'}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="19" cy="11" r="4"/></svg>
+                            <span className="text-xs font-bold">الأصدقاء</span>
+                        </button>
+                        <button onClick={() => window.location.href = 'Profile.html'} className={`flex flex-col items-center gap-1 ${activeTab === 'profile' ? 'text-blue-600' : 'text-gray-400'}`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span className="text-xs font-bold">حسابي</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<JobSearchPage />);
+    </script>
+</body>
+</html>
